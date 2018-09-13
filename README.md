@@ -4,7 +4,7 @@ LaTeX template for Collaborative Research Center proposals following
 the DFG guidelines.
 
 * Mainmaintainer: [Felix Golcher](https://github.com/felixgolcher)
-* Collaborators: [Thomas McFadden](https://github.com/mcfadden13), [Thomas Krause](https://github.com/thomaskrause), [Anke Lüdeling] (https://github.com/AnkeLuedeling)
+* Collaborators: [Thomas McFadden](https://github.com/mcfadden13), [Thomas Krause](https://github.com/thomaskrause), [Anke Lüdeling](https://github.com/AnkeLuedeling)
 
 ## Structure and Subdirs 
 
