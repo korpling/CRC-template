@@ -1,0 +1,159 @@
+\cvhead{Professor Dr. Max Mustermann}%
+
+% Die Erklärungen könne, müssen aber nicht gelöscht werden.
+% Sie werden in jedem Fall im finalen Dokument zentral deaktiviert.
+
+% Explanations are deactivated within the final document.
+\erklaer{
+Explanations in German, copied from the official documents.
+  
+Die Forschungsprofile sollen für alle designierten
+Teilprojektleiterinnen und -leiter in kurzer Form Angaben zum
+beruflichen Lebenslauf und zu Publikationen enthalten. Bitte richten
+Sie sich dabei nach der unten stehenden Gliederung. Chronologische
+Aufzählungen sollten mit dem am kürzesten zurückliegenden Ereignis
+beginnen. Die Erhebung der Geburtsdaten und des Geschlechts der
+Teilprojektleiterinnen und Teilprojektleiter dient ausschließlich der
+Identitätsfeststellung bzw. statistischen Zwecken.}
+
+% Bitte verwenden Sie die vordefinierten Befehle und Überschriften für
+% die Abschnitte im Lebenslauf.
+
+% Please use the predefined Macros.
+
+\cvsection{\cvgeninf}
+% allgemeine Angaben.
+\erklaer{Allgemeine Angaben
+\begin{itemize}
+\item Name (ggf. auch Geburtsname), Vorname, akademischer Titel,
+  Geburtsdatum, Geschlecht
+\item  Institutsanschrift, Telefonnummer,
+  E-Mail-Adresse
+\item Derzeitige Position und Status,
+  z.B. Postdoktorand/-in, Emmy-Noether-Nachwuchsgruppenleiter/-in,
+  Jun.-Prof., Heisenberg-Stipendiat/-in oder -Professor/-in,
+  Professor/-in (C3, C4, W2, W3)
+\item Falls familiäre Verpflichtungen wie
+  Kinderbetreuung oder die Pflege von Angehörigen den Fortgang Ihrer
+  wissenschaftlichen Karriere verzögert haben, geben Sie hier bitte
+  die entsprechenden Zeiträume (Elternzeiten, Pflegezeiten) und
+  ggf. die Geburtsjahre der Kinder an.
+\end{itemize}}
+
+% Ersetzten Sie mit Ihren Angaben.
+\cvgi[24 months parenatal leave in total, after the birth of two
+children in 2012 and 2017] % Optional. Leer lassen, falls unzutreffend.
+{Prof. Dr. Max Mustermann} % Name mit Titel.
+{1972-01-27} % Geburtsdatum YYYY-MM-DD
+{f}% f und m funktionieren als Abkürzungen, abweichendes wird übernommen.
+{\instn, \unia, \uniaaddress}% Institutsadresse
+{+49 30 20931111}% Telefonnummer (bitte Format beibehalten (idealerweise))
+{martin.mustermann@unseen-university.uu} % Email
+{www.unseen-university.uu/MaxMustermann} % Homepage
+{University Professor (W3)} % Position und Status
+
+% Akademische Ausbildung mit Abschluss
+% Academic education.
+\cvsection{\cveduc}
+\erklaer{
+  Akademische Ausbildung mit Abschluss
+  \begin{itemize}
+  \item Studienfächer (JJJJ – JJJJ), Universitäten, Abschlüsse,
+    Betreuer/-in der Abschlussarbeiten
+\end{itemize}
+}
+
+\begin{cvtimeline}
+  % Das zweite Argument (das Endjahr 2001 im Beispiel) kann leer
+  % bleiben.  Die Abkürzung 'now' akzeptiert und sollte statt
+  % 'current' oder 'present' verwendet werden.
+
+  % second argument can be empty.
+  % 'now' is a predefined value and should be used instead of
+  % 'current' or 'present'.
+\cvtlit{1995}{2001}{Philantrophy, Invisible College, Master of Arts,
+  Prof. Dr. Meng}
+\end{cvtimeline}
+
+%  Scientific Degrees
+\cvsection{\cvdeg}
+\erklaer{
+  Wissenschaftliche Abschlüsse
+  \begin{itemize}
+  \item Habilitation: Fach, Universität, Abschlussjahr, Mentor/-in
+  \item Promotion: Fach, Universität, Jahr der mündlichen Prüfung,
+    Betreuer/-in
+  \item Anderer wissenschaftlicher Abschluss: Fach,
+    Universität/Einrichtung, Abschlussjahr, Betreuer/-in oder
+    Mentor/-in
+  \end{itemize}
+}
+
+\begin{cvdesc}
+  % There are Macros prepared for Master's degrees and Staatsexamina.
+  \cvhabil[The Optional Title]{Philantropy}{Unseen University}{2009}{Prof. Dr. Isaac Newton}
+  \cvdoc[The Optional Title]{Philosophy}{Charles University Prague}{2013}{Prof. Dr. Gottfried W. Leibniz}{\drphil}
+\end{cvdesc}
+
+% Beruflicher Werdegang ab Studienabschluss
+% Academic Career following End of Studies
+\cvsection{\cvdep}
+\erklaer{
+  Beruflicher Werdegang ab Studienabschluss
+  \begin{itemize}
+  \item Zeiten (JJJJ – JJJJ), Position/Funktion (Postdoktorand/-in
+    o.ä.), Universität / Einrichtung / Unterneh- men
+\end{itemize}
+}
+\begin{cvtimeline}
+  % Auch hier kann das Argument für das Endjahr frei bleiben. Die
+  % Abkürzung 'now' akzeptiert und sollte statt 'current' oder
+  % 'present' verwendet werden.
+
+  % second argument can be empty.
+  % 'now' is a predefined value and should be used instead of
+  % 'current' or 'present'.
+  \cvtlit{2002}{now}{Junior Professor, Philippine Institute of
+    Volcanology and Seismology}
+  \cvtlit{2001}{2002}{Researcher, Institut für
+    Kooperationswissenschaft, Universität Atlantis}
+  \cvtlit{1998}{2001}{Researcher, Institut für manuelle
+    Sprachverwaltung, Universität Überlingen}
+\end{cvtimeline}
+
+% Sonstiges
+% Misc
+\cvsection{\cvmisc}
+\erklaer{
+  Sonstiges
+  \begin{itemize}
+  \item Herausgeberschaften, Funktionen in wissenschaftlichen Beiräten
+    oder Beratergremien etc., Auszeichnungen u.a.
+  \end{itemize}
+}
+
+\begin{cvitemize}
+\cvit Member of the Advisory Board of the Journal \textit{My Language}
+\cvitft{Referee: DFG, Applied Linguistics, and science foundations in Belgium, France and Poland}{1999}{1999}
+\cvitft{The X Price for excellent teaching, University of Y}{2013}{}
+\cvitft{Member of the Z Comission}{2011}{now}
+\cvitft{Editor of the book series XYZ}{2000}{2005}
+\end{cvitemize}
+
+% Selected publications
+\cvsection{\cvpub}
+\erklaer{
+Publikationen.
+An dieser Stelle nennen Sie bitte Ihre wichtigsten
+Publikationen. Diese müssen nicht im Zusammenhang mit dem von Ihnen
+geleiteten Teilprojekt stehen. Sie sind zu gliedern in
+}
+
+% peer reviewed:
+\peerbib{test1,test3,buch1} % Insert your own bibtex keys here.
+% other:
+\otherbib{teil1,proc1} % Insert your own bibtex keys here.
+% patents:
+\patentbib% Output disappears if arguments are empty
+  {patent2}%filed
+  {patent1}%granted

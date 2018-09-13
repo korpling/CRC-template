@@ -1,0 +1,19 @@
+%% LaTeX template for the project descriptions %%
+%% use together with P00.tex and P00.bib
+\documentclass[final, headinclude=false, chapterprefix=false, fontsize=10pt,
+  paper=A4, headings=small, bibliography=leveldown, toc=graduated,
+  reqno,titlepage,twoside=true,open=any]
+  {scrbook}
+
+\input{../../../../preamble}
+\addbibresource{P00.bib}
+
+\usepackage{layout}  
+\begin{document}
+
+\include{P00}
+
+\printbibliography
+
+\end{document}
+

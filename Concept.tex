@@ -1,0 +1,57 @@
+\documentclass[final, headinclude=false, chapterprefix=false, fontsize=10pt,
+  paper=A4, headings=small, bibliography=leveldown, toc=graduated,
+  reqno,titlepage,twoside=true,open=any]
+  {scrbook}
+\input{preamble}
+%\long\def\inttodo#1{\relax}
+%\long\def\inttodomar#1{\relax}
+%\long\def\flx#1{\relax}
+\usepackage{layout}  
+\begin{document}
+
+% \layout
+% \newpage
+% \layout
+
+\frontmatter
+\maketitle
+\tableofcontents
+\mainmatter
+
+\include{keydata}
+\include{general}
+
+\chapter{Projects}
+\thispagestyle{empty}
+\label{chap:projects}
+
+\input{projectlist}
+
+\newpage
+
+\printbibliography[heading=bibliographysection,title={Bibliography}]
+
+
+\appendix
+
+\chapter{Research profiles}
+\addtocounter{page}{-1}
+\thispagestyle{empty}
+
+\input{cvlist}
+
+\chapter{Collaboration with researchers outside the CRC}
+
+\include{collaborators}
+
+\chapter{\sigpl}
+\markboth{\sigpl}{\sigpl}
+\thispagestyle{empty}
+\newpage
+
+
+\includepdf{Unterschriftenblatt.pdf}
+%\includepdf{LetterGraduateSchool.pdf}
+
+\backmatter
+\end{document}

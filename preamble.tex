@@ -1,0 +1,633 @@
+% use input or include? % new page for each project or not?
+\newif\ifdoinclude\doincludetrue
+
+\ifdoinclude
+  \newcommand{\meinclude}[1]{\include{#1}}
+\else
+  \newcommand{\meinclude}[1]{\input{#1}}
+  \long\def\includeonly#1{\relax}
+\fi
+
+% If you want to see what package versions are used
+% \listfiles % writes to logfile
+  
+% If only a part of the document is to be compiled:
+% put \inlcudeonly{filelist} % in inlcudeonly.tex
+\InputIfFileExists{includeonly.tex}{}{}
+  
+\areaset[10mm]{40pc}{675pt} % 
+
+% Some simple packages
+\usepackage{parskip}
+\usepackage{paralist}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{blindtext}
+\usepackage{phonenumbers}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{eurosym}
+\usepackage{csquotes}
+\usepackage{pdfpages}
+\usepackage[american]{isodate}
+\usepackage{xspace}
+\usepackage{changebar}
+\usepackage{ulem}
+\usepackage{booktabs}
+
+% hyperref
+\usepackage[colorlinks=false,
+pdfstartview=FitV,
+linkbordercolor=white,
+% allcolors=black,
+linkcolor=black,
+citecolor=black,
+citebordercolor=white,
+pdfborderstyle={/S/U/W 1},
+urlcolor=black,
+urlbordercolor=white,
+pagebackref=false]{hyperref}
+
+
+% For showing defined labels:
+% change final to draft in order to see the refs.
+\usepackage[notref, notcite, final]{showkeys}
+\renewcommand*\showkeyslabelformat[1]{%
+                                      \rotatebox{45}{\normalfont
+                                      \tiny
+                                      \ttfamily#1}%
+                                      }
+\usepackage[disable, % comment to see todos.
+obeyDraft,obeyFinal,textsize=small]{todonotes}
+
+% xelatex specifics (better with ipa and stuff)
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setdefaultlanguage[variant=american]{english}
+
+
+% Bibliography and tweaks. Those tweaks aim at making the bibliography
+% as short as possible which is usually what you desire.
+
+% (it would be great to have different bibstlyes in the project
+% descriptions, the cvs, and the main bibliographies. Unfortunately,
+% "biblatex can't support multiple styles in the same document."
+% (https://tex.stackexchange.com/questions/109234/change-biblatex-citation-style-after-preamble))
+\usepackage[backend=biber,
+	natbib=true,
+	bibstyle=authoryear-icomp,
+        firstinits=true,
+        citestyle=authoryear-icomp, % supports ibid abbreviation.
+	maxbibnames=5,
+        maxcitenames=2,% as short as bearable?
+        mincitenames=1,
+	isbn=false,
+	doi=false,
+	eprint=true,
+	url=false,
+        autolang=hyphen,
+        date=year% don't be impressed by the full date if given.
+]{biblatex}
+\IfFileExists{Concept.bib}{\addbibresource{Concept.bib}}{}
+
+% Vor creating strings like V. Nachname and M. Mustermann":
+% https://texwelt.de/wissen/fragen/5750/biblatex-funote-s-fehlt-wenn-f-oder-ff-nach-seitenzahl-folgt
+\newrobustcmd*{\citefirstlastauthor}{\AtNextCite{\DeclareNameAlias{labelname}{first-last}}\citeauthor}
+
+% to have titles like title: subtitle (the vikings: how they got where
+% they went)
+\renewcommand{\subtitlepunct}{: }
+
+% removing some fields from the bibliography altogether and some
+% conditional on the entry type:
+\AtEveryBibitem{% Clean up the bibtex rather than editing it
+ \clearlist{address}
+ \clearfield{issn}
+ \clearlist{location}
+ \clearfield{month}
+ \clearfield{series}
+ \clearfield{pagetotal}
+ 
+ \ifentrytype{article}{
+  \clearlist{publisher}
+  \clearname{editor}
+ }{}
+ \ifentrytype{book}{
+   \clearfield{number}
+ }{}
+ \ifentrytype{inproceedings}{
+   \clearfield{number}
+ }{}
+ \ifentrytype{incollection}{
+   \clearfield{number}
+ }{}
+ \ifentrytype{collection}{
+   \clearfield{number}
+ }{}
+}
+% omit the pp. in bibliography.
+\DeclareFieldFormat{pages}{#1}
+
+% https://tex.stackexchange.com/questions/150461/replace-and-with-ampersand-in-bibliography-and-parenthetical-citations-using-b
+\AtBeginBibliography{%
+  \renewcommand*{\finalnamedelim}{%
+    \ifnumgreater{\value{liststop}}{2}{%\finalandcomma
+      % A, B, & C looks a bit stupid, so we change it to
+      % A, B & C.
+}{}%
+    \addspace\&\space}%
+}
+
+%% https://tex.stackexchange.com/questions/22980/sentence-case-for-titles-in-biblatex
+\DeclareFieldFormat{sentencecase}{\MakeSentenceCase{#1}}
+
+% https://3d.bk.tudelft.nl/hledoux/blog/fiddling-biblatex/
+% remove the quotes around the title of the paper
+\DeclareFieldFormat[article, inbook, incollection, inproceedings, misc, thesis, unpublished]{title}{#1}
+
+% https://tex.stackexchange.com/questions/10682/suppress-in-biblatex
+\renewbibmacro{in:}{%
+  \ifentrytype{article}{}{\printtext{\bibstring{in}\intitlepunct}}}
+%\renewbibmacro{byeditor}{ed\addotspace} % wollte nicht.
+%% Sentence case for title:subtitle in article and in* entries.
+%% Titlecase else.
+\renewbibmacro*{title}{%
+  \ifthenelse{\iffieldundef{title}\AND\iffieldundef{subtitle}}
+    {}
+    {\ifthenelse{\ifentrytype{article}\OR\ifentrytype{inbook}%
+      \OR\ifentrytype{incollection}\OR\ifentrytype{inproceedings}%
+      \OR\ifentrytype{inreference}}
+      {\printtext[title]{%
+        \printfield[sentencecase]{title}%
+        \setunit{\subtitlepunct}%
+        \printfield[sentencecase]{subtitle}}}%
+      {\printtext[title]{%
+        \printfield[titlecase]{title}%
+        \setunit{\subtitlepunct}%
+        \printfield[titlecase]{subtitle}}}%
+     \newunit}%
+  \printfield{titleaddon}}
+% end bibliography tweaks.
+
+% for a consistent formatting of references between projects.
+% https://tex.stackexchange.com/questions/64131/implementing-switch-cases
+\usepackage{xifthen}
+\newcommand{\project}[2]{\hypersetup{linkbordercolor=red}\hyperref[#1]{#1}}
+\newcommand{\ifequals}[3]{\ifthenelse{\equal{#1}{#2}}{#3}{}}
+\newcommand{\case}[2]{#1 #2} % Dummy, so \renewcommand has something to overwrite...
+\newenvironment{switch}[1]{\renewcommand{\case}{\ifequals{#1}}}{}
+\newcommand{\PP}[1]{%
+    \begin{switch}{#1}%
+        \case{A01}{\project{A01}{Stark}}%
+        \case{B01}{\project{B01}{Baratheon \& Lannister}}%
+        \case{MGK}{\project{MGK}{Stark \& Lannister}}%
+        \case{INF}{\project{INF}{Stark, Baratheon \& Lannister}}%
+        \case{Z01}{\project{Z01}{Stark \& Baratheon}}%
+    \end{switch}%
+  }
+% For self references:  
+\newcommand\PPs[1]{#1}
+% Would be better to have only one command which detects if we have a
+% self reference or not.
+
+% Define your own commands here if you like:
+\newcommand{\gethelp}[1]{\todo[inline, color=green]{#1}}
+\normalem
+\newcommand{\ul}[1]{\cbstart\uline{#1}\cbend\xspace}
+\newcommand{\so}[1]{\cbstart\sout{#1}\cbend\xspace}
+
+% for cost calculating tables
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+% language and font
+\setmainfont{Latin Modern Sans}[
+%                   SmallCapsFont={Latin Modern Roman Caps}
+SmallCapsFont={[jkpssmsc8a.pfb]}
+]
+\setsansfont{Latin Modern Sans}
+% following is so Junicode works on Mac; hopefully shouldn't
+% break it for everyone else.
+\newcommand{\Junicode}{\setmainfont
+  [    Extension = .ttf,
+  UprightFont = *,
+  BoldFont = *-Bold,
+  ItalicFont = *-Italic,
+  BoldItalicFont = *-BoldItalic,
+  ]{Junicode}}
+
+
+%\overfullrule=5pt % to show overfull boxes
+
+%%%% Titles and Other Strings %%%%
+\newcommand{\cvpub}{Selected Publications}
+\newcommand{\cvgeninf}{General Information}
+\newcommand{\cveduc}{Academic Education with Qualifications}
+\newcommand{\cvdeg}{Academic Degrees}
+\newcommand{\cvdep}{Academic Career following End of Studies}
+\newcommand{\cvmisc}{Miscellaneous}
+\newcommand{\prbibhead}{Project-related publications by participating researchers}
+\newcommand{\prbibheadsingle}{Project-related publications by participating researchers (all peer reviewed or monographs)}
+\newcommand{\prsum}{Project description}
+\newcommand{\resqu}{Summary and main research question}
+\newcommand{\state}{Current state of research and preliminary work by principal investigator}
+\newcommand{\statepl}{\state s}
+\newcommand{\respr}{Research program and role within the proposed Collaborative Research Center}
+\newcommand{\resprp}{Research program}
+\newcommand{\role}{Role within the proposed CRC}
+\newcommand{\pisg}{Principal investigator}
+\newcommand{\pipl}{\pisg s}
+\newcommand{\funds}{Project funding}
+\newcommand{\peerlit}{Peer Reviewed Publications and Monographs}
+\newcommand{\otherlit}{Other Publications}
+\newcommand{\R}{\mathbb R}
+
+% edit especially the following to your need
+\newcommand{\crctitle}{CRC-Title}
+\newcommand{\crcsubtitle}{CRC-Subtitle}
+\newcommand{\thiscrc}{CRC \textit{Our CRC}}
+\newcommand{\ABRA}{Uni~A}
+\newcommand{\ABRB}{Uni~B}
+\newcommand{\ABRC}{Uni~C}
+\newcommand{\unia}{U Meinestadt\xspace}
+\newcommand{\unialong}{Schön-Universität zu Meinestadt\xspace}
+\newcommand{\uniaaddress}{Breite Straße~7, 22334 Meinestadt}
+\newcommand{\uniclong}{Universität X}
+\newcommand{\unicaddress}{Alte Straße 2, 98765 Bettenburg}
+\newcommand{\uniblong}{Wissenschaftseinrichtung B\xspace}
+\newcommand{\unibaddress}{Bäckerstr.~18, 33445 Deinestadt}
+\newcommand{\instn}{Inst.\ f.\ Wissenschaft}
+
+\newcommand{\wimi}{Research associate\xspace}
+\newcommand{\sigsg}{Signature of the head of the applicant university}
+\newcommand{\sigpl}{Signatures of the heads of the applicant universities}
+% Those academic titles/positions work outside of names like in (\drphil)
+\newcommand{\drphil}{Dr.~phil.\xspace}
+\newcommand{\ma}{MA\xspace}
+\newcommand{\dring}{Dr.-Ing.\xspace}
+\newcommand{\dipling}{Dipl.-Ing.\xspace}
+\newcommand{\phd}{PhD\xspace}
+\newcommand{\pd}{PD\xspace}
+\newcommand{\postdoc}{Post-doc\xspace}
+% Those are always parts of academic titles as in \proflong Bertram.
+% long version for headers, short for running text.
+\newcommand{\proflong}{Prof.~} % Professor
+\newcommand{\profshort}{Prof.~}
+\newcommand{\uproflong}{Prof.~} % Universitätsprofessor
+\newcommand{\uprofshort}{Prof.~}
+\newcommand{\drlong}{Dr.~} % Doctor
+\newcommand{\drshort}{Dr.~}
+\newcommand{\drphillong}{Dr.~} % Doctor Philosophiae
+\newcommand{\drphilshort}{Dr.~} % Dr. phil.
+\newcommand{\drhclong}{Dr.~h.c.~} % Doctor h.c. or the like
+\newcommand{\drhcshort}{Dr.~h.c.~}
+\newcommand{\pdlong}{PD~} % Privatdozent
+\newcommand{\pdshort}{PD~} % Priv.-Doz.
+\newcommand{\phdlong}{Dr.~} % Ph.D.
+\newcommand{\phdshort}{Dr.~} % Ph.D.
+\newcommand{\diplmathlong}{Dipl.-Math.~} % Diplom-Mathematiker
+\newcommand{\diplmathshort}{Dipl.-Math.~}
+\newcommand{\diplinglong}{Dipl.-Ing.~} % Diplom-Mathematiker
+\newcommand{\diplingshort}{Dipl.-Ing.~}
+\newcommand{\diplinflong}{Dipl.-Inf.~} % Diplom-Informatiker
+\newcommand{\diplinfshort}{Dipl.-Inf.~}
+
+
+%%%% more specialized macros: %%%%
+
+% subsections with numbers not occuring in toc:
+\makeatletter
+\newcommand{\notocsubsection}[1]{%
+  \refstepcounter{subsection}%
+  %\subsection*{\thesubsection \quad #1}
+  \subsection*{\@arabic\c@subsection \quad #1}
+}
+\newcommand{\notocsubsubsection}[1]{%
+  \refstepcounter{subsubsection}%
+  %\subsection*{\thesubsection \quad #1}
+  \subsection*{\@arabic\c@subsection.\@arabic\c@subsubsection \quad #1}
+}
+\makeatother
+
+% customize bibs in cv & project descriptions:
+\defbibheading{cvbib}[\bibname]{%
+\subsubsection*{#1}}
+
+\defbibheading{cvsubbib}[\bibname]{%
+\paragraph*{#1}}
+
+\defbibheading{prbib}[\bibname]{%
+\notocsubsection{#1}}
+
+\defbibheading{prsubbib}[\bibname]{%
+% \paragraph*{#1}%
+\textbf{#1}}
+
+% explanations:
+\newcommand{\erklaer}[1]{\begingroup\color{red}\begin{quote}#1\end{quote}\endgroup}
+% switch off with uncommenting:
+\renewcommand{\erklaer}[1]{}
+
+% the same as environment, not as easily deactivated:
+\newenvironment{erklaerung}{%
+  \begingroup
+  \color{red}
+  \begin{quote}
+  }
+  {%
+  \end{quote}
+  \endgroup
+}
+%\renewenvironment{erklaerung}{}{}
+
+% for time lines in the cv
+\newlength\widest
+\setlength\widest{5.5em}%
+\newenvironment{cvtimeline}{%
+  \begingroup
+  % \begin{tabular}{p{.1\textwidth}p{.8\textwidth}}
+  \begin{description}[leftmargin=\widest,
+    labelwidth=\dimexpr\widest-0.5em\relax,
+    font=\normalfont]
+%  \begin[itemindent=1cm]{description}
+  }
+  {%
+      %     \end{tabular}
+  \end{description}
+  \endgroup
+}
+
+% containing the pi-information in proj-desc
+\newenvironment{giprenv}[1][.495]{%
+  \begingroup
+  \begin{minipage}[t]{#1\textwidth}
+    \raggedright
+  }
+  {%
+  \end{minipage}
+  \endgroup
+}
+\newcommand{\gicolsep}{\hfill}
+\newcommand{\girowsep}{
+  
+}
+
+% formatting date ranges:
+\newcommand{\fromto}[3][n]{%
+  % 2016 2018: 2016 -- 2018
+  % 2016 now: since 2016
+  % 2016 2016: 2016
+  % 2016 "": 2016
+  % "" "" : ""
+  % #1 j: The optional argument switches between brackets or no brackets.
+\ifthenelse{\equal{#1}{j}\AND\NOT\(\isempty{#2}\AND\isempty{#3}\)}{(}{}%
+\ifthenelse{\isempty{#3}\OR\equal{#2}{#3}}%
+{#2}%
+{\ifthenelse{\equal{#3}{now}}{since~#2}{#2--#3}}%
+\ifthenelse{\equal{#1}{j}\AND\NOT\(\isempty{#2}\AND\isempty{#3}\)}{)}{}%
+}
+
+
+
+% for items within those timelines:
+% format: \cvtlit{startyear}{endyear}{text}
+\newcommand{\cvtlit}[3]{\item[\fromto{#1}{#2}]#3}
+
+% for more general lists like the usual latex description environment:
+\newenvironment{cvdesc}{%
+  \begingroup
+  \begin{description}[font=\normalfont]
+  }
+  {%
+  \end{description}
+  \endgroup
+}
+\newcommand{\cvitem}[2]{\item[#1] #2}
+
+% bullet lists:
+\newenvironment{cvitemize}{%
+  \begingroup
+  \begin{compactitem}
+  }
+  {%
+  \end{compactitem}
+  \endgroup
+}
+\newcommand{\cvit}{\item}
+\newcommand{\cvitft}[3]{\item #1~\fromto[j]{#2}{#3}}
+
+% If Argument contains
+% ","
+% " and "
+% "\&"
+% "/"
+% \plurals return "s", else the empty string.
+\newcommand{\plurals}[1]{\IfSubStr{#1}{,}{s}{\IfSubStr{#1}{ and }{s}{\IfSubStr{#1}{\&}{s}{\IfSubStr{#1}{/}{s}{}}}}}
+
+% habilitation:
+\newcommand{\cvhabil}[5][]{%[tit] field, univ, year, mentor
+  \cvitem{Habilitation (#4)}{#2, #3,\ifthenelse{\NOT\isempty{#1}}{\textit{ #1\ifthenelse{\isempty{#5}}{.}{,}}}{} \ifthenelse{\isempty{#5}}{}{Mentor\plurals{#5}: #5}}
+}
+
+% field#1 degree#2
+\newcommand{\fielddeg}[2]{
+\ifthenelse{\isempty{#1}}{\ifthenelse{\isempty{#2}}{}{#2,}}{\ifthenelse{\isempty{#2}}{#1,}{#1 (#2)}}
+}
+% umhabilitation:
+\newcommand{\cvumhabil}[3]{% field, univ, year
+  \cvitem{Umhabilitation (#3)}{#1, #2}
+}
+% promotion.
+%[tit] field, univ, year, supervisor, degree
+\newcommand{\cvdoc}[6][]{
+  \cvitem{Doctoral Degree (#4)}{\fielddeg{#2}{#6} #3,\ifthenelse{\NOT\isempty{#1}}{\textit{ #1\ifthenelse{\isempty{#5}}{.}{,}}}{} \ifthenelse{\isempty{#5}}{}{Supervisor\plurals{#5}: #5}}
+}
+% master
+% [title]#1 field#2, univ#3, year#4, supervisor#5, degree#6
+\newcommand{\cvmaster}[6][]{
+  \cvitem{Master's Degree (#4)}% header + title
+  {\fielddeg{#2}{#6} #3\ifthenelse{\NOT\isempty{#1}}{\textit{, #1}}{}\ifthenelse{\isempty{#5}}{}{, Supervisor\plurals{#5}: #5}
+  }
+} 
+
+% [title] field, univ, year, supervisor, degree
+\newcommand{\cvdipl}[6][]{
+  \cvitem{Diplom (#4)}% header + title
+  {\ifthenelse{\isempty{#2}}{\ifthenelse{\isempty{#6}}{}{#6,}}{\ifthenelse{\isempty{#6}}{#2,}{#2 (#6)}}\ifthenelse{\isempty{#3}}{}{, #3}\ifthenelse{\NOT\isempty{#1}}{\textit{, #1}}{}\ifthenelse{\isempty{#5}}{}{, Supervisor\plurals{#5}: #5}
+  }
+} 
+
+% Staatsexamen
+\newcommand{\cvseeins}[2][]{
+  \cvitem{Erstes Staatsexamen (#2)}{#1\xspace(state examination)}
+}
+\newcommand{\cvsezwei}[2][]{
+  \cvitem{Zweites Staatsexamen (#2)}{#1\xspace(state examination)}
+}
+
+% "project-related" in project-description
+% not too unelegant, but it won't be possible (?) to refer by label to
+% the generated section.
+\newcommand{\prbib}[1]{
+\begin{refsection}
+\nocite{#1}
+\printbibliography[heading=prbib,title={\prbibheadsingle}]
+\end{refsection}
+}
+
+
+% peer reviewed bibliography (cv)
+\newcommand{\peerbib}[1]{
+\begin{refsection}
+\nocite{#1}
+\printbibliography[heading=cvbib,title={\peerlit}]
+\end{refsection}
+}
+
+% peer reviewed bibliography (project description)
+\newcommand{\prpeerbib}[1]{
+  \begin{refsection}
+    \nocite{#1}
+    % \AtNextBibliography{\small} % might be forbidden
+    \printbibliography[heading=prsubbib,title={\peerlit}]
+  \end{refsection}
+}
+
+% other references (cv)
+\newcommand{\otherbib}[1]{
+  \begin{refsection}
+    \nocite{#1}
+    \printbibliography[heading=cvbib, title={\otherlit}]
+  \end{refsection}
+}
+
+% other references (project descriptions)
+\newcommand{\protherbib}[1]{
+  \begin{refsection}
+    \nocite{#1}
+    % \AtNextBibliography{\small} % might be forbidden
+    \printbibliography[heading=prsubbib, title={\otherlit}]
+  \end{refsection}
+}
+
+% patents (cv):
+\newcommand{\patentbib}[2]{%
+  \ifthenelse{\isempty{#1}\AND\isempty{#2}}
+  {}{
+    \subsubsection*{c) Patents}}
+\begin{refsection}
+\nocite{#1}
+\printbibliography[heading=cvsubbib, title={Filed}]
+\end{refsection}
+\begin{refsection}
+\nocite{#2}
+\printbibliography[heading=cvsubbib, title={Granted}]
+\end{refsection}
+}
+
+\newcommand{\prbibs}[2]{
+\notocsubsection{\prbibhead}
+\ifthenelse{\isempty{#1}}{}{\prpeerbib{#1}}
+\ifthenelse{\isempty{#2}}{}{\protherbib{#2}}}
+
+% title of cv:
+\newcommand{\cvhead}[1]{%
+  \setcounter{secnumdepth}{0}%
+  \setcounter{subsection}{0}% todo: das war auf einmal nötig?!
+  % geht das eleganter?
+  % Vielleicht einfach keine Nummern für die subsections?
+  % subsubsection auch auf null?
+  \markboth{#1}{#1}
+  \thispagestyle{plain}
+  \section{#1}}
+
+\newcommand{\prhead}[3][]{%
+  \setcounter{secnumdepth}{0}%
+  \setcounter{subsection}{0}% todo: das war auf einmal nötig?!
+  \setcounter{figure}{0}
+  \section{#2: #3}\label{#2}
+  \ifthenelse{\isempty{#1}}
+  {\markboth{#2}{#2: #3}}
+  {\markboth{#2}{#2: #1}} % shorttitle
+  \thispagestyle{plain}
+}
+
+
+\makeatletter
+% sections in cv:
+\newcommand{\cvsection}[1]{%
+  \refstepcounter{subsection}%
+  \subsection*{\@arabic\c@subsection \quad #1}
+}
+% subsections in cv (not explicitely used):
+\newcommand{\cvsubsection}[1]{%
+  \refstepcounter{subsubsection}%
+  \subsubsection*{\@arabic\c@subsection.\@arabic\c@subsubsection \quad #1}
+}
+\makeatother
+
+% flx: todo: Was, wenn keine Homepage vorliegt (genauer)?
+% flx: todo: Adresse wird schnell (viel) zu lang.
+\makeatletter
+% #1 [parental leave remark]
+% #2 name
+% #3 birth date
+% #4 gender
+% #5 institute+address
+% #6 phone
+% #7 mail
+% #8 homepage
+% #9 position
+\newcommand{\ourphone}[1]{\phonenumber[foreign,foreign-area-code-sep=space]{#1}}
+\let\textphone\ourphone
+\newcommand*{\cvgi}{\begingroup\@makeother\_\@makeother~\@cvgi}
+\newcommand*{\@cvgi}[9][]{#2\\
+  \ifthenelse{\isempty{#3}}{}{*\printdate{#3},}%
+  \ifthenelse{\equal{#4}{f}}{~female}{%
+    \ifthenelse{\equal{#4}{m}}{~male}{~#4}
+  }\\
+  #5\\
+  \ourphone{#6}\\
+  \href{mailto:#7}{\texttt{#7}}\\
+  \ifthenelse{\NOT\isempty{#8}}{
+  \href{#8}{\texttt{#8}}\\}{}%
+  #9\\
+  #1
+  \endgroup}
+\makeatother
+
+% typesetting the general information (project description)
+\newcommand{\prgi}[7]{#1, *\printdate{#2}\\
+  #3% inst 
+%  #3\\ % inst 
+\ifthenelse{\NOT\isempty{#4}}{, #4\\}{} % uni
+#5\\ % address
+% We don't want a newline here. If it's too wide, do something else about it.
+\mbox{\phonenumber[foreign,foreign-area-code-sep=space]{#6} \textbullet{}
+  \href{mailto:#7}{#7}}
+}
+
+
+\defbibheading{bibliographysection}{%
+  \section*{#1}%
+  \phantomsection
+  \addcontentsline{toc}{chapter}{#1}
+  \markboth{#1}{#1}%
+  \thispagestyle{plain}
+  \renewcommand*{\bibfont}{\small}%
+}
+
+% titelei
+\subject{Proposed Collaborative Research Center}
+\title{\crctitle}
+\subtitle{\crcsubtitle}
+\publishers{\unialong \\
+  \uniblong}
+\titlehead{\includegraphics[width=\textwidth]{misc/logos/logo1} \includegraphics{misc/logos/logo2}}
+
+%  table of content
+\setcounter{tocdepth}{3}
+
+% numbering equations by section
+\numberwithin{equation}{section}
+
+\sloppy
+

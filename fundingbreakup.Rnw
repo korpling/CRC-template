@@ -1,0 +1,30 @@
+<<datprep,include=F>>=
+library(readODS)
+library(xtable)
+library(readr)
+breakup <- read_ods("funding.ods",col_types = cols(col_character(),
+                                                   col_double(),
+                                                   col_double(),
+                                                   col_double(),
+                                                   col_double()))
+## following a hack. addColsums would work if the first col were the rownames.
+## One could change that, but.
+breakup$Project <- paste0("\\PP{",breakup$Project,"}")
+breakup <- rbind(breakup, breakup[1,])
+breakup[nrow(breakup),"Project"] <- "Total"
+breakup[nrow(breakup),-1] <- colSums(breakup[-nrow(breakup),-1],na.rm = T)
+@
+
+<<dotable,results='asis',echo=FALSE>>=
+print(xtable(breakup,digits = c(0,1,1,1,1,1),
+             caption = " Requested personnel breakdown by subproject (two student assistants in Z01 will be funded by \\ABRA)",
+             label = "tab:breakfund"),
+      include.rownames=F,
+      hline.after = c(-1,0,nrow(breakup)-1,nrow(breakup)),
+      #add.to.row = list(pos=list(-1),command="\\ra{1.3}"),
+      booktabs = T,
+      timestamp = NULL,
+      comment = F,
+      sanitize.text.function = I,
+      sanitize.colnames.function = I)
+@

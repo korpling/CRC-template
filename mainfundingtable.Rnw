@@ -1,0 +1,72 @@
+<<datprep,include=F>>=
+library(readODS)
+library(xtable)
+library(readr)
+breakup <- read_ods("funding.ods",col_types = cols(col_character(),
+                                                   col_double(),
+                                                   col_double(),
+                                                   col_double(),
+                                                   col_double()))
+direct <- read_ods("funding.ods",sheet = "direct")
+rownames(direct) <- direct[,1]
+direct <- direct[,-1]
+myr <- function(x) ifelse(is.na(x),"",round(x,1))
+myt <- function(x) as.character(round(x/10)*10)
+cc <- read_ods("funding.ods",sheet="costcat",col_names = T)
+costcat <- cc$peryear
+names(costcat) <- cc$costcat
+counts <- c(sum(breakup[,2],na.rm=T),
+            sum(breakup[,3],na.rm=T),
+            0, ## hard coded research assistant. #zeroed out by TM
+            sum(breakup[,5],na.rm=T),
+            sum(breakup[,4],na.rm=T)
+            )
+fracs <- c(1,.65,.5,.5,1)
+piece <- c(costcat["Postdoc"], 
+           costcat["DocCand"],
+           costcat["Postdoc"], # research ast
+           costcat["AdAst"], # administrative ast
+           costcat["Student"])
+staff <- (counts*fracs*piece) %*% t(rep(1,4))
+yearsums <- myt(apply(rbind(staff, as.matrix(direct)),2,sum,na.rm=T))
+@
+
+\begin{table*}\centering
+%\ra{1.3}
+\begin{tabular}{@{}rrlrlrrrrcr}\toprule
+  &&&&& Year\,1 & Year\,2 & Year\,3 & Year\,4 && Total \\
+\cmidrule{6-9}
+\multicolumn{5}{l}{Staff} \\
+~~~~& \Sexpr{counts[1]} & Post-docs &\Sexpr{fracs[1]*100}\% & E13 & \Sexpr{paste(myr(staff[1,]),collapse = " & ")} &&
+   \Sexpr{myt(sum(staff[1,],na.rm=T))} \\
+& \Sexpr{counts[2]} & Doctoral students & \Sexpr{fracs[2]*100}\% & E13 &  \Sexpr{paste(myr(staff[2,]),collapse = " & ")} &&
+   \Sexpr{myt(sum(staff[2,],na.rm=T))}\\
+% Research assistant commented out by TM. now included in post-docs
+%& \Sexpr{counts[3]} & Research assistant & \Sexpr{fracs[3]*100}\%  & E13 &  \Sexpr{paste(myr(staff[3,]),collapse = " & ")} &&
+%   \Sexpr{myt(sum(staff[3,],na.rm=T))}\\
+& \Sexpr{counts[4]} & Administrative assistant &  \Sexpr{fracs[4]*100}\% & E8 &  \Sexpr{paste(myr(staff[4,]),collapse = " & ")} &&
+   \Sexpr{myt(sum(staff[4,],na.rm=T))}\\
+& \Sexpr{counts[5]} & Student Workers & \multicolumn{2}{l}{41 hrs/month} &  \Sexpr{paste(myr(staff[5,]),collapse = " & ")} &&
+   \Sexpr{myt(sum(staff[5,],na.rm=T))}\\
+\multicolumn{5}{l}{Direct Costs} \\
+&& \multicolumn{2}{l}{Travel Costs} && \Sexpr{paste(myr(direct["Travel",]),collapse = " & ")} && 
+   \Sexpr{myt(sum(direct["Travel",],na.rm=T))} \\
+&& \multicolumn{2}{l}{Guests and Conferences} && \Sexpr{paste(myr(direct["Guests",]),collapse = " & ")} && 
+   \Sexpr{myt(sum(direct["Guests",],na.rm=T))}\\
+&& \multicolumn{2}{l}{Test subjects etc.} && \Sexpr{paste(myr(direct["Subjects",]),collapse = " & ")} && 
+   \Sexpr{myt(sum(direct["Subjects",],na.rm=T))}\\
+&& \multicolumn{2}{l}{Lump sum} && \Sexpr{paste(myr(direct["Lump",]),collapse = " & ")} && 
+   \Sexpr{myt(sum(direct["Lump",],na.rm=T))}\\
+&& \multicolumn{2}{l}{Gender Equality} && \Sexpr{paste(myr(direct["Gender",]),collapse = " & ")} && 
+   \Sexpr{myt(sum(direct["Gender",],na.rm=T))}\\
+&& \multicolumn{2}{l}{Replacements} && \Sexpr{paste(myr(direct["Replacements",]),collapse = " & ")} && 
+   \Sexpr{myt(sum(direct["Replacements",],na.rm=T))}\\
+&& \multicolumn{2}{l}{Mercator Fellows} && \Sexpr{paste(myr(direct["Mercator",]),collapse = " & ")} && 
+   \Sexpr{myt(sum(direct["Mercator",],na.rm=T))}\\
+\cmidrule{6-9}\cmidrule{11-11}
+\multicolumn{3}{l}{Total} & & & \Sexpr{paste(yearsums, collapse=" & ")} & & \Sexpr{myt(sum(c(staff, unlist(direct)), na.rm=T))} \\
+\bottomrule
+\end{tabular}
+\caption{Overview of requested funding. Numbers are in units of \EUR{1000}, totals rounded to \EUR{10000}.}
+\label{tab:reqfund}
+\end{table*}
