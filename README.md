@@ -3,6 +3,10 @@
 LaTeX template for Collaborative Research Center proposals following
 the DFG guidelines.
 
+It might be necessary to adapt to changes in guidelines.
+
+The LaTeX code is far from being professional. Every collaboration, be it direct changes to the code or feedback is highly appreciated.
+
 * Mainmaintainer: [Felix Golcher](https://github.com/felixgolcher)
 * Collaborators: [Thomas McFadden](https://github.com/mcfadden13), [Thomas Krause](https://github.com/thomaskrause), [Anke Lüdeling](https://github.com/AnkeLuedeling)
 
