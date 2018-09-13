@@ -1,7 +1,7 @@
 # CRC-template
 
 LaTeX template for Collaborative Research Center proposals following
-the DFG guidelines.
+the DFG guidelines (DFG-Vordruck 60.01 – 10/17).
 
 It might be necessary to adapt to changes in guidelines.
 
